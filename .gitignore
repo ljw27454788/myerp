@@ -1,0 +1,33 @@
+myerp/settings.py
+myerp/myerp/__init__.py
+myerp/__init__.py
+__init__.py
+*/migrations/*.py
+
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+
+# Environments
+venv/
+.env
+.env.*
+
+# Django
+*.sqlite3
+db.sqlite3
+*.pyc
+media/
+staticfiles/
+
+# VSCode or PyCharm
+.vscode/
+.idea/
+
+# Mac/Linux/Windows
+.DS_Store
+Thumbs.db
