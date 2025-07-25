@@ -1,5 +1,51 @@
-{% for obj in object_list %}
-    {{obj.name}}
-    {{obj.get_absolute_url}}
+{% extends 'base.html' %}
+{% block content %}
+  {% load static %}
 
-{% endfor %}
+  <div class="card mt-2">
+    <div class="card-header">
+      <h3 class="card-title">设备列表</h3>
+    </div>
+    <div class="card-body">
+      <table id="table1" class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>设备名称</th>
+            <th>查看详情</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in object_list %}
+            <tr>
+              <td>{{ obj.name }}</td>
+              <td>
+                <a type="button" href="{{ obj.get_absolute_url }}" class="btn btn-block btn-outline-primary">查看详情</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="{% static 'adminlte/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+  <script>
+    $(function () {
+      $('#table1').DataTable({
+        language: {
+          search: '搜索：'
+        },
+        lengthChange: false,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
+      })
+    })
+  </script>
+{% endblock %}

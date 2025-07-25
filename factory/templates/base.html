@@ -57,9 +57,9 @@
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                     data-accordion="false">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'machines' %}" class="nav-link">
                             <i class="nav-icon fas fa-file"></i>
-                            <p>a</p>
+                            <p>设备管理</p>
                         </a>
                     </li>
                 </ul>
@@ -71,19 +71,13 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        {% block content %}
-        {% endblock %}
+        <div class="container-fluid">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
     <!-- /.content-wrapper -->
 
-    <!-- Main Footer -->
-    <footer class="main-footer">
-        <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-        All rights reserved.
-        <div class="float-right d-none d-sm-inline-block">
-            <b>Version</b> 3.2.0
-        </div>
-    </footer>
 </div>
 <!-- ./wrapper -->
 
