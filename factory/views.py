@@ -10,7 +10,7 @@ from factory.models import Machine
 # Create your views here.
 class MachineListView(generic.ListView):
     model = Machine
-    template_name = "machine_list.html"
+    template_name = "machines.html"
 
     def get_queryset(self):
         return Machine.objects.all()
@@ -34,6 +34,6 @@ class MachineDetailView(generic.DetailView):
             df = pd.read_excel(file_path, engine='openpyxl')
         except Exception as e:
             return context
-        table_html = df.to_html(classes='table table-bordered', index=False)
+        table_html = df.to_html(classes='table table-bordered', index=False, na_rep='')
         context['table_html'] = table_html
         return context

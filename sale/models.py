@@ -4,30 +4,125 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
+from factory.models import Client, Product
+
 import os
 import uuid
 
 User = get_user_model()
 # Create your models here.
 
-class Order(models.Model):
+
+class Invoice(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    order_code = models.CharField(max_length=20, unique=True, editable=False)
+    invoice_code = models.CharField(max_length=20, unique=True, editable=False)
+    note = models.TextField(max_length=200, null=True, blank=True)
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
-    
+
     def save(self, *args, **kwargs):
-        if not self.order_code:
-            today = timezone.now().strftime('%Y%m%d')
-            prefix = 'C' + today
-            
-            last_order = Order.objects.filter(order_code__startswith=prefix).order_by('-order_code').first()
+        if not self.invoice_code:
+            today = timezone.now().strftime("%Y%m%d")
+            prefix = "C" + today
+
+            last_order = (
+                Order.objects.filter(invoice_code__startswith=prefix)
+                .order_by("-invoice_code")
+                .first()
+            )
             if last_order:
                 last_seq = int(last_order.order_number[-4:])
-                next_seq = f'{last_seq + 1:04d}'
+                next_seq = f"{last_seq + 1:04d}"
             else:
-                next_seq = '0001'
-                
-            self.order_number = prefix + next_seq
-            
+                next_seq = "0050"
+
+            self.invoice_code = prefix + next_seq
+
         super().save(*args, **kwargs)
+
+
+class Order(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    invoice = models.ForeignKey(Invoice, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    price = models.DecimalField(max_digits=10, decimal_places=4)
+    quantity = models.PositiveIntegerField(default=0)
+    remain_quantity = models.PositiveIntegerField(default=0)
+    note = models.CharField(max_length=100, null=True, blank=True)
+    total = models.DecimalField(max_digits=15, decimal_places=4)
+    complete = models.BooleanField(default=False)
+    reply_time = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.total = self.quantity * self.price
+        super().save(*args, **kwargs)
+
+    def get_total_price(self):
+        return self.quantity * self.price
+
+
+class SendInvoice(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    invoice_code = models.CharField(max_length=20, unique=True, editable=False)
+    note = models.TextField(max_length=200, null=True, blank=True)
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(default=timezone.now)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    total = models.DecimalField(max_digits=12, decimal_places=4)
+
+    def save(self, *args, **kwargs):
+        if not self.invoice_code:
+            today = timezone.now().strftime("%Y%m%d")
+            prefix = "CY" + today
+
+            last_order = (
+                Order.objects.filter(invoice_code__startswith=prefix)
+                .order_by("-invoice_code")
+                .first()
+            )
+            if last_order:
+                last_seq = int(last_order.order_number[-4:])
+                next_seq = f"{last_seq + 1:04d}"
+            else:
+                next_seq = "0050"
+
+            self.invoice_code = prefix + next_seq
+
+        super().save(*args, **kwargs)
+
+
+class SendOrder(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    invoice = models.ForeignKey(SendInvoice, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=4)
+    total = models.DecimalField(max_digits=12, decimal_places=4, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.total = self.quantity * self.price
+        super().save(*args, **kwargs)
+
+
+class PriceRecord(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    price = models.DecimalField(max_digits=10, decimal_places=4)
+    moq = models.PositiveIntegerField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("client", "product", "moq")
+
+
+class Sample(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(default=0)
+    send_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    complete = models.BooleanField(default=False)
