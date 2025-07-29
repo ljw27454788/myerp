@@ -21,7 +21,7 @@ class MachineListView(generic.ListView):
     
 class MachineDetailView(generic.DetailView):
     model = Machine
-    template_name = "machine_detail.html"
+    template_name = "machines_detail.html"
 
     def get_object(self, *args, **kwargs):
         obj = super(MachineDetailView, self).get_object(*args, **kwargs)

@@ -1,9 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 import os
 import uuid
+
+User = get_user_model()
 # Create your models here.
 
 # 基础信息
@@ -14,6 +17,9 @@ class Product(models.Model):
     in_name = models.CharField(max_length=200, unique=True)
     out_name = models.CharField(max_length=200, unique=True)
     code = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    
+    def __str__(self):
+        return self.in_name
 
 # 设备
 class Machine(models.Model):
@@ -22,10 +28,10 @@ class Machine(models.Model):
     note = models.TextField(max_length=1000, null=True, blank=True)
 
     def get_absolute_url(self):
-        return reverse('machines-detail', args=[str(self.id)])
+        return reverse('factory:machines-detail', args=[str(self.id)])
     
     def __str__(self):
-        return '%s' % (self.name)
+        return self.name
     
 # 客户
 class Client(models.Model):
@@ -34,6 +40,10 @@ class Client(models.Model):
     code = models.CharField(max_length=10, unique=True)
     phone = models.CharField(max_length=30, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
 
 # 供应商
 class Supplier(models.Model):
@@ -42,6 +52,9 @@ class Supplier(models.Model):
     code = models.CharField(max_length=10, unique=True)
     phone = models.CharField(max_length=30, null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
 
 # 原料
 class Material(models.Model):
@@ -49,6 +62,9 @@ class Material(models.Model):
     name = models.CharField(max_length=100, unique=True)
     code = models.CharField(max_length=50, null=True, blank=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
+    
+    def __str__(self):
+        return self.name
 
 # 关联信息
 # 每台设备基础产品产能

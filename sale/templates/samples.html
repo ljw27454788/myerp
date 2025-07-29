@@ -1,4 +1,58 @@
 {% extends 'base.html' %}
 {% block content %}
   {% load static %}
+  <div class="card mt-2">
+    <div class="card-header d-flex">
+      <h3 class="mb-0">样品列表</h3>
+      <a class="btn btn-outline-primary ml-auto" href="{% url 'sale:samples-create' %}"><i class="nav-icon fas fa-plus"></i> 新建样品单</a>
+    </div>
+    <div class="card-body">
+      <table id="table1" class="table table-bordered table-striped text-center">
+        <thead>
+          <tr>
+            <th>产品规格</th>
+            <th>客户</th>
+            <th>数量</th>
+            <th>下样日期</th>
+            <th></th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in object_list %}
+            <tr>
+              <td>
+                <a href="#">{{ obj.product }}</a>
+              </td>
+              <td>{{ obj.client }}</td>
+              <td>{{ obj.quantity }}</td>
+              <td>{{ obj.created_at }}</td>
+              <td><a class="btn btn-info" href="{% url 'sale:samples-update' obj.id %}">修改</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="{% static 'adminlte/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+  <script>
+    $(function () {
+      $('#table1').DataTable({
+        language: {
+          search: '搜索：'
+        },
+        lengthChange: false,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
+      })
+    })
+  </script>
 {% endblock %}
