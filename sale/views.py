@@ -1,5 +1,6 @@
 import os
 
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.views import generic
 from django.urls import reverse_lazy
@@ -50,6 +51,11 @@ class SampleUpdateView(generic.UpdateView):
 class SampleDeleteView(generic.DeleteView):
     model = Sample
     success_url = reverse_lazy("sale:samples")
-
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        print(self.object)
+        if self.object.complete:
+            return HttpResponseForbidden("禁止删除已完成的记录")
+        return super().delete(request, *args, **kwargs)
