@@ -27,7 +27,7 @@ class SampleListView(generic.ListView):
 
 class SampleCreateView(generic.CreateView):
     model = Sample
-    fields = ["product", "client", "quantity"]
+    fields = ["product", "client", "quantity", "note"]
     template_name = "samples_create.html"
     success_url = reverse_lazy("sale:samples")
 
@@ -43,7 +43,7 @@ class SampleCreateView(generic.CreateView):
 
 class SampleUpdateView(generic.UpdateView):
     model = Sample
-    fields = ["product", "client", "quantity"]
+    fields = ["product", "client", "quantity", "note"]
     template_name = "samples_update.html"
     success_url = reverse_lazy("sale:samples")
 
@@ -52,7 +52,7 @@ class SampleDeleteView(generic.DeleteView):
     model = Sample
     success_url = reverse_lazy("sale:samples")
     
-    def delete(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         print(self.object)

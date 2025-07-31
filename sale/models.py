@@ -119,10 +119,14 @@ class PriceRecord(models.Model):
 
 class Sample(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    client = models.ForeignKey(Client, on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField(default=0)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="产品")
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="客户")
+    quantity = models.PositiveIntegerField(default=0, verbose_name="数量")
+    note = models.TextField(max_length=200, null=True, blank=True, verbose_name="备注")
     send_at = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
     complete = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f'{self.client}_{self.product}'
