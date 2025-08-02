@@ -108,9 +108,10 @@ class SendOrder(models.Model):
 
 class PriceRecord(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    price = models.DecimalField(max_digits=10, decimal_places=4)
-    moq = models.PositiveIntegerField(null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="产品")
+    price = models.DecimalField(max_digits=10, decimal_places=4, verbose_name="单价")
+    moq = models.PositiveIntegerField(null=True, blank=True, verbose_name="最小起订量")
+    has_tax = models.BooleanField(default=False, verbose_name="是否含税")
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
