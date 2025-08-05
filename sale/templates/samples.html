@@ -14,8 +14,9 @@
             <th>客户</th>
             <th>数量</th>
             <th>下样日期</th>
+            <th>回复交期</th>
+            <th>备注</th>
             <th></th>
-            
           </tr>
         </thead>
         <tbody>
@@ -27,6 +28,8 @@
               <td>{{ obj.client }}</td>
               <td>{{ obj.quantity }}</td>
               <td>{{ obj.created_at }}</td>
+              <td>{{ obj.lead_time }}</td>
+              <td>{{ obj.note }}</td>
               <td><a class="btn btn-info" href="{% url 'sale:samples-update' obj.id %}">修改</a></td>
             </tr>
           {% endfor %}

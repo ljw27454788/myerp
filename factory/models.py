@@ -66,6 +66,17 @@ class Material(models.Model):
     def __str__(self):
         return self.name
 
+
+# 产品原料BOM
+class ProductMaterial(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ("product", "material")
+    
+    def __str__(self):
+        return f'{self.product}_{self.material}'
 # 关联信息
 # 每台设备基础产品产能
 # class MachineCapability(models.Model):

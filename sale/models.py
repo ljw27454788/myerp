@@ -116,6 +116,9 @@ class PriceRecord(models.Model):
 
     class Meta:
         unique_together = ("client", "product", "moq")
+        
+    def __str__(self):
+        return f'{self.client}_{self.product}'
 
 
 class Sample(models.Model):
@@ -123,8 +126,9 @@ class Sample(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="产品")
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name="客户")
     quantity = models.PositiveIntegerField(default=0, verbose_name="数量")
+    lead_time = models.DateField(default=None, null=True, blank=True, verbose_name="回复交期")
     note = models.TextField(max_length=200, null=True, blank=True, verbose_name="备注")
-    send_at = models.DateTimeField(default=timezone.now)
+    send_at = models.DateTimeField(default=timezone.now, verbose_name="发送日")
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
     complete = models.BooleanField(default=False)

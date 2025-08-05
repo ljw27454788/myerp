@@ -1,5 +1,6 @@
 import os
 
+from django import forms
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.views import generic
@@ -27,13 +28,17 @@ class SampleListView(generic.ListView):
 
 class SampleCreateView(generic.CreateView):
     model = Sample
-    fields = ["product", "client", "quantity", "note"]
+    fields = ["product", "client", "quantity", "lead_time", "note"]
     template_name = "samples_create.html"
     success_url = reverse_lazy("sale:samples")
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         # form.fields['client'].queryset = Client.objects.filter(user=self.request.user)
+        form.fields['lead_time'].widget = forms.DateTimeInput(
+            attrs={'type': 'date'},
+            format='%Y-%m-%d'
+        )
         return form
 
     def form_valid(self, form):
@@ -43,9 +48,17 @@ class SampleCreateView(generic.CreateView):
 
 class SampleUpdateView(generic.UpdateView):
     model = Sample
-    fields = ["product", "client", "quantity", "note"]
+    fields = ["product", "client", "quantity", "lead_time", "note"]
     template_name = "samples_update.html"
     success_url = reverse_lazy("sale:samples")
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['lead_time'].widget = forms.DateTimeInput(
+            attrs={'type': 'date'},
+            format='%Y-%m-%d'
+        )
+        return form
 
 
 class SampleDeleteView(generic.DeleteView):
@@ -54,8 +67,6 @@ class SampleDeleteView(generic.DeleteView):
     
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        print(self.object)
         if self.object.complete:
             return HttpResponseForbidden("禁止删除已完成的记录")
         return super().delete(request, *args, **kwargs)
