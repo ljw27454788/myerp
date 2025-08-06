@@ -69,14 +69,15 @@ class Material(models.Model):
 
 # 产品原料BOM
 class ProductMaterial(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="产品")
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, verbose_name="材料")
     
     class Meta:
         unique_together = ("product", "material")
     
     def __str__(self):
         return f'{self.product}_{self.material}'
+    
 # 关联信息
 # 每台设备基础产品产能
 # class MachineCapability(models.Model):

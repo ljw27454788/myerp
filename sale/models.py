@@ -128,10 +128,10 @@ class Sample(models.Model):
     quantity = models.PositiveIntegerField(default=0, verbose_name="数量")
     lead_time = models.DateField(default=None, null=True, blank=True, verbose_name="回复交期")
     note = models.TextField(max_length=200, null=True, blank=True, verbose_name="备注")
-    send_at = models.DateTimeField(default=timezone.now, verbose_name="发送日")
+    send_at = models.DateTimeField(default=None, null=True, blank=True, verbose_name="发送日")
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
     complete = models.BooleanField(default=False)
     
     def __str__(self):
-        return f'{self.client}_{self.product}'
+        return f'{self.client}_{self.product}_{self.quantity}'

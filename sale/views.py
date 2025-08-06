@@ -3,8 +3,11 @@ import os
 from django import forms
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.views import generic
 from django.urls import reverse_lazy
+from django.utils import timezone
+
 
 from sale.models import Sample
 from factory.models import Client
@@ -16,14 +19,12 @@ class SampleListView(generic.ListView):
     template_name = "samples.html"
 
     def get_queryset(self):
-        show_all = self.request.GET.get("show_all")
-        if show_all:
-            return Sample.objects.all()
         return Sample.objects.filter(complete=False)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(SampleListView, self).get_context_data(*args, **kwargs)
-        return context
+
+class AllSampleListView(generic.ListView):
+    model = Sample
+    template_name = "all_samples.html"
 
 
 class SampleCreateView(generic.CreateView):
@@ -35,9 +36,8 @@ class SampleCreateView(generic.CreateView):
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         # form.fields['client'].queryset = Client.objects.filter(user=self.request.user)
-        form.fields['lead_time'].widget = forms.DateTimeInput(
-            attrs={'type': 'date'},
-            format='%Y-%m-%d'
+        form.fields["lead_time"].widget = forms.DateTimeInput(
+            attrs={"type": "date"}, format="%Y-%m-%d"
         )
         return form
 
@@ -51,20 +51,29 @@ class SampleUpdateView(generic.UpdateView):
     fields = ["product", "client", "quantity", "lead_time", "note"]
     template_name = "samples_update.html"
     success_url = reverse_lazy("sale:samples")
-    
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['lead_time'].widget = forms.DateTimeInput(
-            attrs={'type': 'date'},
-            format='%Y-%m-%d'
+        form.fields["lead_time"].widget = forms.DateTimeInput(
+            attrs={"type": "date"}, format="%Y-%m-%d"
         )
         return form
+
+    def post(self, request, *args, **kwargs):
+        send = self.request.POST.get("send")
+        if send:
+            self.object = self.get_object()
+            self.object.complete = True
+            self.object.send_at = timezone.now()
+            self.object.save()
+            return redirect(self.get_success_url())
+        return super().post(request, *args, **kwargs)
 
 
 class SampleDeleteView(generic.DeleteView):
     model = Sample
     success_url = reverse_lazy("sale:samples")
-    
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.complete:

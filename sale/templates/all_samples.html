@@ -18,7 +18,7 @@
     <div class="card-header d-flex">
       <h3 class="mb-0">样品列表</h3>
       <div class="ml-auto">
-        <a class="btn btn-outline-secondary" href="{% url 'sale:all-samples' %}"><i class="nav-icon fas fa-plus"></i> 查看所有样品单</a>
+        <a class="btn btn-outline-warning" href="{% url 'sale:samples' %}"><i class="nav-icon fas fa-plus"></i> 查看进行中样品单</a>
         <a class="btn btn-outline-primary" href="{% url 'sale:samples-create' %}"><i class="nav-icon fas fa-plus"></i> 新建样品单</a>
       </div>
     </div>
@@ -32,7 +32,7 @@
             <th>下样日期</th>
             <th>回复交期</th>
             <th>备注</th>
-            <th></th>
+            <th>交货日</th>
           </tr>
         </thead>
         <tbody>
@@ -46,9 +46,7 @@
               <td>{{ obj.created_at }}</td>
               <td>{{ obj.lead_time|default:'/' }}</td>
               <td>{{ obj.note|default:'/' }}</td>
-              <td>
-                <a class="btn btn-info" href="{% url 'sale:samples-update' obj.id %}">修改 / 发货</a>
-              </td>
+              <td>{{ obj.send_at|date:'Y年m月d日'|default:'/' }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -56,14 +54,19 @@
     </div>
   </div>
 
+  <script src="{% static 'adminlte/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
   <script>
     $(function () {
       $('#table1').DataTable({
         language: {
           search: '搜索：'
         },
-        paging: false,
-        lengthChange: false,
+        paging: true,
+        lengthChange: true,
         searching: true,
         ordering: true,
         info: false,

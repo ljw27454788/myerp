@@ -19,6 +19,8 @@
     <script src="{% static 'adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <!-- AdminLTE -->
     <script src="{% static 'adminlte/dist/js/adminlte.js' %}"></script>
+
+    {% block css_js %}{% endblock %}
   </head>
 
   <body class="hold-transition sidebar-mini">
@@ -98,11 +100,5 @@
       <!-- /.content-wrapper -->
     </div>
     <!-- ./wrapper -->
-
-    <script>
-      $(function () {
-        bsCustomFileInput.init()
-      })
-    </script>
   </body>
 </html>
