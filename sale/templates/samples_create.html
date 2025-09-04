@@ -4,8 +4,25 @@
   <h2>新建样品单</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_table }}
+    {{ formset.management_form }}
+    <table>
+      <tr>
+        <th>产品</th>
+        <th>客户</th>
+        <th>数量</th>
+        <th>交期</th>
+        <th>备注</th>
+      </tr>
+      {% for form in formset %}
+        <tr>
+          <td>{{ form.product }}</td>
+          <td>{{ form.client }}</td>
+          <td>{{ form.quantity }}</td>
+          <td>{{ form.lead_time }}</td>
+          <td>{{ form.note }}</td>
+        </tr>
+      {% endfor %}
+    </table>
     <button type="submit">保存</button>
-    
   </form>
 {% endblock %}

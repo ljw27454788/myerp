@@ -2,8 +2,8 @@ import os
 
 from django import forms
 from django.http import HttpResponseForbidden
-from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.views import generic
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -12,8 +12,28 @@ from django.utils import timezone
 from sale.models import Sample
 from factory.models import Client
 
+from sale.forms import SampleFormSet
+
 
 # Create your views here.
+@login_required
+def samples_create(request):
+    if request.method == "POST":
+        formset = SampleFormSet(request.POST)
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for obj in instances:
+                obj.created_by = request.user
+                obj.created_at = timezone.now()
+                obj.save()
+            return redirect("sale:samples")
+    else:
+        formset = SampleFormSet(queryset=Sample.objects.none())  # 空表单集
+
+    return render(request, "samples_create.html", {"formset": formset})
+
+
+
 class SampleListView(generic.ListView):
     model = Sample
     template_name = "samples.html"
