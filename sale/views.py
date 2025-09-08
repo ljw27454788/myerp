@@ -8,9 +8,10 @@ from django.views import generic
 from django.urls import reverse_lazy
 from django.utils import timezone
 
+from dal import autocomplete
 
 from sale.models import Sample
-from factory.models import Client
+from factory.models import Client, Product
 
 from sale.forms import SampleFormSet
 
@@ -99,3 +100,13 @@ class SampleDeleteView(generic.DeleteView):
         if self.object.complete:
             return HttpResponseForbidden("禁止删除已完成的记录")
         return super().delete(request, *args, **kwargs)
+
+
+class ProductAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Product.objects.all()
+        if self.q:
+            keywords = self.q.split()
+            for kw in keywords:
+                qs = qs.filter(in_name__icontains=kw)
+        return qs

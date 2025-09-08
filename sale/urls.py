@@ -11,4 +11,6 @@ urlpatterns = [
     re_path(r'^samples-create$', views.samples_create, name='samples-create'),
     re_path(r'^samples-update/(?P<pk>[-\w]+)/edit$', views.SampleUpdateView.as_view(), name='samples-update'),
     re_path(r'^samples-update/(?P<pk>[-\w]+)/delete$', views.SampleDeleteView.as_view(), name='samples-delete'),
+    
+    path("product-autocomplete/", views.ProductAutocomplete.as_view(), name="product-autocomplete"),
 ]

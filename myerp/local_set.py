@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'factory.apps.FactoryConfig',
     'sale.apps.SaleConfig',
+    'dal',
+    'dal_select2',
 ]
 
 MIDDLEWARE = [
