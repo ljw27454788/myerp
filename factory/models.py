@@ -102,7 +102,6 @@ class Material(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=100, unique=True, verbose_name="原料名称")
     code = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name="原料编码")
-    specification = models.CharField(max_length=200, null=True, blank=True, verbose_name="规格")
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES, default='pcs', verbose_name="单位")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="单价")
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, verbose_name="供应商")
